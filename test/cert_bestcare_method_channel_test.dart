@@ -9,10 +9,17 @@ void main() {
   const MethodChannel channel = MethodChannel('cert_bestcare');
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) async {
-        return '42';
+        if (methodCall.method == 'getPlatformVersion') {
+          return '42';
+        } else if (methodCall.method == 'libInitialize') {
+          return 0;
+        } else {
+          return null;
+        }
       },
     );
   });
@@ -23,5 +30,9 @@ void main() {
 
   test('getPlatformVersion', () async {
     expect(await platform.getPlatformVersion(), '42');
+  });
+
+  test('libInitialize', () async {
+    expect(await platform.libInitialize(), 0);
   });
 }
